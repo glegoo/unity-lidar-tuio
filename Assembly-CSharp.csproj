@@ -10,7 +10,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace>
     </RootNamespace>
-    <ProjectGuid>{C5E724AF-D98F-FE32-C9A5-31B662E0E587}</ProjectGuid>
+    <ProjectGuid>{F05CD3FF-B3AF-6247-139E-B8132673E075}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -69,17 +69,18 @@
     <Compile Include="Assets\Scripts\SerialCommunicationFacade.cs" />
     <Compile Include="Assets\Scripts\TestFor.cs" />
     <Compile Include="Assets\Scripts\UdpServer.cs" />
+    <None Include="Assets\myXML\settings.xml" />
     <Reference Include="UnityEditor.StandardEvents">
-      <HintPath>D:/yoki/lele/lidar/testYDLidar/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+      <HintPath>D:/yoki/git/yRnD/Unity/LidarDataVisualization/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>D:/yoki/lele/lidar/testYDLidar/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>D:/yoki/git/yRnD/Unity/LidarDataVisualization/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>D:/yoki/lele/lidar/testYDLidar/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>D:/yoki/git/yRnD/Unity/LidarDataVisualization/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>D:/yoki/lele/lidar/testYDLidar/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>D:/yoki/git/yRnD/Unity/LidarDataVisualization/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.11f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

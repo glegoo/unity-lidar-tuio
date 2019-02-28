@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+
+using System.Xml.Linq;
+
 namespace Assets.SerialPortUtility.Scripts
 {
     public class SerialCommunicationFacade : MonoBehaviour, ISerialCommunication
@@ -103,6 +106,23 @@ namespace Assets.SerialPortUtility.Scripts
             colors = new Color32[triggerAreas.Length];
             IsInsideArea = new bool[triggerAreas.Length];
             IsInsideArea_last = new bool[triggerAreas.Length];
+
+            //reading xml n assigning to the trigger area
+            XDocument allXMLData = XDocument.Load("Assets/myXML/settings.xml");
+            for (int m = 0; m < triggerAreas.Length; m++)
+            {
+                string[] center = allXMLData.Element("settings").Element("videoContainer" + m).Element("center").Value.Trim().Split(',');
+                string width = allXMLData.Element("settings").Element("videoContainer" + m).Element("width").Value.Trim();
+                string height = allXMLData.Element("settings").Element("videoContainer" + m).Element("height").Value.Trim();
+                triggerAreas[m].GetComponent<RectTransform>().localPosition = new Vector3((myCanvasWidth / 2 - (float.Parse(center[0])  + float.Parse(width) / 2)) * (-1),
+                                                                                          (myCanvasHeight / 2 - (float.Parse(center[1]) + float.Parse(height) / 2)), 
+                                                                                          0);
+                triggerAreas[m].GetComponent<RectTransform>().sizeDelta = new Vector3(float.Parse(width), float.Parse(height), 1);
+            }
+
+
+            //print("x: " + myXY[0] + "  y: " + myXY[1]);
+
             //initialize rect
             for (int i = 0; i < triggerAreas.Length; i++)
             {
@@ -111,7 +131,7 @@ namespace Assets.SerialPortUtility.Scripts
                                             triggerAreas[i].GetComponent<RectTransform>().sizeDelta.x,
                                             triggerAreas[i].GetComponent<RectTransform>().sizeDelta.y);
                 triggerRawImage[i] = triggerAreas[i].GetComponent<RawImage>();
-                triggerRawImage[i].color = new Color32(2, 130, 27, 255);
+                triggerRawImage[i].color = new Color32(2, 130, 27, 55);
                 IsInsideArea[i] = false;
                 IsInsideArea_last[i] = false;
             }
@@ -252,7 +272,7 @@ namespace Assets.SerialPortUtility.Scripts
                 for (int aid = 0; aid < triggerAreas.Length; aid++)
                 {
                     bool isContained = false;
-                    colors[aid] = new Color32(2, 130, 27, 255);
+                    colors[aid] = new Color32(2, 130, 27, 75);
                     IsInsideArea[aid] = false;
                     for (int pid = 0; pid < ids.Count; pid++)
                     {
@@ -260,7 +280,7 @@ namespace Assets.SerialPortUtility.Scripts
                         if (triggerRects[aid].Contains(ids_positions[pid]))
                         {
                             isContained = true;
-                            colors[aid] = new Color32(171, 37, 1, 255);
+                            colors[aid] = new Color32(171, 37, 1, 75);
                             IsInsideArea[aid] = true;
                             break;
                         }
