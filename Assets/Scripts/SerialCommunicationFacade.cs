@@ -50,6 +50,7 @@ namespace Assets.SerialPortUtility.Scripts
         public float neededAreaOffsetY = 0;
         public int gridSizeX = 6;
         public int gridSizeY = 6;
+        public string xmlPath = "Assets/myXML/settings.xml";
 
         //trigger area
         public GameObject[] triggerAreas;
@@ -68,6 +69,40 @@ namespace Assets.SerialPortUtility.Scripts
         GameObject neededArea;
 
         void Start()
+        {
+            
+
+            //initialize the needed area
+            neededArea = new GameObject();
+            neededArea.AddComponent<RectTransform>();
+            neededArea.transform.SetParent(GameObject.Find("Panel").transform);
+           
+            neededArea.AddComponent<RawImage>();
+            neededArea.GetComponent<RawImage>().color = new Color32(0, 86, 147, 45);
+
+            neededArea.GetComponent<RectTransform>().localScale = Vector3.one;
+
+            //initialize the trriger area rects colors and bools
+            triggerRects = new Rect[triggerAreas.Length];
+            triggerRawImage = new RawImage[triggerAreas.Length];
+            colors = new Color32[triggerAreas.Length];
+            IsInsideArea = new bool[triggerAreas.Length];
+            IsInsideArea_last = new bool[triggerAreas.Length];
+
+            UpdateDataWPlayerPref();
+
+
+            //print("x: " + myXY[0] + "  y: " + myXY[1]);
+
+
+
+            //print(triggerRects[0].width +" " + triggerRects[0].height +" "+ triggerRects[0].x +" "+ triggerRects[0].y);
+
+            //repeatly calling update in 0.02f time interval
+            InvokeRepeating("UpdateParticlesAndAreas", 1.0f, 0.02f);
+        }
+
+        public void UpdateDataWPlayerPref()
         {
             //initialize the particle system
             canvasGridX = Mathf.FloorToInt(myCanvasWidth) / gridSizeX;
@@ -90,38 +125,23 @@ namespace Assets.SerialPortUtility.Scripts
             //set the particles initially
             pointCloudParticles.SetParticles(particles, particles.Length);
 
-            //initialize the needed area
-            neededArea = new GameObject();
-            neededArea.AddComponent<RectTransform>();
-            neededArea.transform.SetParent(GameObject.Find("Panel").transform);
+            //needed area
             neededArea.GetComponent<RectTransform>().localPosition = new Vector2(sensorOffsetX, sensorOffsetY);
             neededArea.GetComponent<RectTransform>().sizeDelta = new Vector2(neededAreaWidth, neededAreaHeight);
-            neededArea.GetComponent<RectTransform>().localScale = Vector3.one;
-            neededArea.AddComponent<RawImage>();
-            neededArea.GetComponent<RawImage>().color = new Color32(0, 86, 147, 45);
-
-            //initialize the trriger area rects colors and bools
-            triggerRects = new Rect[triggerAreas.Length];
-            triggerRawImage = new RawImage[triggerAreas.Length];
-            colors = new Color32[triggerAreas.Length];
-            IsInsideArea = new bool[triggerAreas.Length];
-            IsInsideArea_last = new bool[triggerAreas.Length];
 
             //reading xml n assigning to the trigger area
-            XDocument allXMLData = XDocument.Load("Assets/myXML/settings.xml");
+            XDocument allXMLData = XDocument.Load(xmlPath);
             for (int m = 0; m < triggerAreas.Length; m++)
             {
                 string[] center = allXMLData.Element("settings").Element("videoContainer" + m).Element("center").Value.Trim().Split(',');
                 string width = allXMLData.Element("settings").Element("videoContainer" + m).Element("width").Value.Trim();
                 string height = allXMLData.Element("settings").Element("videoContainer" + m).Element("height").Value.Trim();
-                triggerAreas[m].GetComponent<RectTransform>().localPosition = new Vector3((myCanvasWidth / 2 - (float.Parse(center[0])  + float.Parse(width) / 2)) * (-1),
-                                                                                          (myCanvasHeight / 2 - (float.Parse(center[1]) + float.Parse(height) / 2)), 
+                //string videoIndex = 
+                triggerAreas[m].GetComponent<RectTransform>().localPosition = new Vector3((myCanvasWidth / 2 - (float.Parse(center[0]) + float.Parse(width) / 2)) * (-1),
+                                                                                          (myCanvasHeight / 2 - (float.Parse(center[1]) + float.Parse(height) / 2)),
                                                                                           0);
                 triggerAreas[m].GetComponent<RectTransform>().sizeDelta = new Vector3(float.Parse(width), float.Parse(height), 1);
             }
-
-
-            //print("x: " + myXY[0] + "  y: " + myXY[1]);
 
             //initialize rect
             for (int i = 0; i < triggerAreas.Length; i++)
@@ -136,10 +156,7 @@ namespace Assets.SerialPortUtility.Scripts
                 IsInsideArea_last[i] = false;
             }
 
-            //print(triggerRects[0].width +" " + triggerRects[0].height +" "+ triggerRects[0].x +" "+ triggerRects[0].y);
 
-            //repeatly calling update in 0.02f time interval
-            InvokeRepeating("UpdateParticlesAndAreas", 0.0f, 0.02f);
         }
 
 #region things that dont need to care
@@ -271,7 +288,7 @@ namespace Assets.SerialPortUtility.Scripts
 
                 for (int aid = 0; aid < triggerAreas.Length; aid++)
                 {
-                    bool isContained = false;
+                    
                     colors[aid] = new Color32(2, 130, 27, 75);
                     IsInsideArea[aid] = false;
                     for (int pid = 0; pid < ids.Count; pid++)
@@ -279,7 +296,7 @@ namespace Assets.SerialPortUtility.Scripts
 
                         if (triggerRects[aid].Contains(ids_positions[pid]))
                         {
-                            isContained = true;
+                            
                             colors[aid] = new Color32(171, 37, 1, 75);
                             IsInsideArea[aid] = true;
                             break;
@@ -475,7 +492,7 @@ namespace Assets.SerialPortUtility.Scripts
         #endregion
         //this function runs in 0.02f interval
         //remember to update the data in 0x01 (when the lidar turns a round
-        void UpdateParticlesAndAreas()
+        public void UpdateParticlesAndAreas()
         {
             //update needed area
             neededArea.GetComponent<RectTransform>().localPosition = new Vector2(neededAreaOffsetX + sensorOffsetX, neededAreaOffsetY + sensorOffsetY);

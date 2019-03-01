@@ -61,6 +61,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Advanced INI Parser\INIParser.cs" />
+    <Compile Include="Assets\Scripts\ControlPanelAssignment.cs" />
     <Compile Include="Assets\Scripts\Destroy.cs" />
     <Compile Include="Assets\Scripts\ISerialCommunication.cs" />
     <Compile Include="Assets\Scripts\Loom.cs" />

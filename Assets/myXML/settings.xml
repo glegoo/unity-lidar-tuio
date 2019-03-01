@@ -2,21 +2,24 @@
 <settings>
 	<vSync>1</vSync>
 	<videoContainer0>
-		<center>960, 530.5</center>
-		<width>480</width>
-		<height>270</height>
-		<frameNum>201</frameNum>
+		<yourVideoName>wall</yourVideoName>
+		<center>530.579, 260.058</center>
+		<width>274.286</width>
+		<height>143.265</height>
+		<frameNum>3070</frameNum>
 	</videoContainer0>
 	<videoContainer1>
-		<center>460.608, 99.8692</center>
-		<width>480</width>
-		<height>270</height>
-		<frameNum>5479</frameNum>
+		<yourVideoName>bunny</yourVideoName>
+		<center>1190.3, 668.814</center>
+		<width>519.184</width>
+		<height>281.02</height>
+		<frameNum>3070</frameNum>
 	</videoContainer1>
 	<videoContainer2>
-		<center>1260.27, 370.532</center>
-		<width>186.122</width>
+		<yourVideoName>countdown</yourVideoName>
+		<center>930.412, 237.963</center>
+		<width>274.286</width>
 		<height>115.714</height>
-		<frameNum>5479</frameNum>
+		<frameNum>3070</frameNum>
 	</videoContainer2>
 </settings>

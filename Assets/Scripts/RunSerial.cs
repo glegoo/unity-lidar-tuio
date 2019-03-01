@@ -9,7 +9,7 @@ namespace Assets.SerialPortUtility.Scripts
     {
 
         SerialCommunicationFacade facade;
-        private string portName = "COM3";
+        public string portName = "COM3";
         private int baudRate = 230400;
         byte[] sendMsg;
         int index = 0;
@@ -27,13 +27,8 @@ namespace Assets.SerialPortUtility.Scripts
 
         private void Awake()
         {
-            //for (int i = 0; i < MaxLength; i++)
-            //{
-            //    GameObject obj = GameObject.Instantiate(img);
-            //    obj.transform.SetParent(canvas.transform);
-            //    obj.SetActive(true);
-            //    imgs.Add(obj);
-            //}
+            
+
         }
         void Start()
         {
@@ -94,6 +89,14 @@ namespace Assets.SerialPortUtility.Scripts
             sendMsg = strToToHexByte("A565");
             facade.SendMessage(sendMsg);
             facade.Disconnect();
+        }
+
+        public void DisconnectLidar()
+        {
+            sendMsg = strToToHexByte("A565");
+            facade.SendMessage(sendMsg);
+            facade.Disconnect();
+
         }
         /// <summary>
         /// 字符串轉16進制字節數組
