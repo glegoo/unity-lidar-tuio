@@ -38,18 +38,24 @@ namespace Assets.SerialPortUtility.Scripts
         private ParticleSystem.Particle[] particles = new ParticleSystem.Particle[0];
 
         public float zoomTimes = 0.3f;
-        public float sensorAngle = 0;   // cable upwards - 0 degree, counter-clockwuse
+        public float sensorAngle = 0;   // cable upwards - 0 degree, clockwise
+
+
         public float sensorOffsetX = 0;  // sensor's distance in x axis to the canvas
         public float sensorOffsetY = 0;
-        public float myCanvasWidth = 1920;
-        public float myCanvasHeight = 1080;
+        float myCanvasWidth = 1920;
+        float myCanvasHeight = 1080;
+        public float ratioMM = 100;
+        public float ratioPX = 400;
+        float sensorOffsetinPixelX;
+        float sensorOffsetinPixelY;
 
-        public float neededAreaWidth = 1920;
-        public float neededAreaHeight = 1080;
-        public float neededAreaOffsetX = 0;
-        public float neededAreaOffsetY = 0;
-        public int gridSizeX = 6;
-        public int gridSizeY = 6;
+        //public float neededAreaWidth = 1920;
+        //public float neededAreaHeight = 1080;
+        //public float neededAreaOffsetX = 0;
+        //public float neededAreaOffsetY = 0;
+        public int gridSizeX = 20;
+        public int gridSizeY = 20;
         public string xmlPath = "Assets/myXML/settings.xml";
 
         //trigger area
@@ -66,21 +72,22 @@ namespace Assets.SerialPortUtility.Scripts
 
         List<GameObject> objs = new List<GameObject>();
 
-        GameObject neededArea;
+        //GameObject neededArea;
 
         void Start()
         {
-            
 
+            myCanvasHeight = Screen.currentResolution.height;
+            myCanvasWidth = Screen.currentResolution.width;
             //initialize the needed area
-            neededArea = new GameObject();
-            neededArea.AddComponent<RectTransform>();
-            neededArea.transform.SetParent(GameObject.Find("Panel").transform);
+            //neededArea = new GameObject();
+            //neededArea.AddComponent<RectTransform>();
+            //neededArea.transform.SetParent(GameObject.Find("Panel").transform);
            
-            neededArea.AddComponent<RawImage>();
-            neededArea.GetComponent<RawImage>().color = new Color32(0, 86, 147, 45);
+            //neededArea.AddComponent<RawImage>();
+            //neededArea.GetComponent<RawImage>().color = new Color32(0, 86, 147, 45);
 
-            neededArea.GetComponent<RectTransform>().localScale = Vector3.one;
+            //neededArea.GetComponent<RectTransform>().localScale = Vector3.one;
 
             //initialize the trriger area rects colors and bools
             triggerRects = new Rect[triggerAreas.Length];
@@ -125,9 +132,13 @@ namespace Assets.SerialPortUtility.Scripts
             //set the particles initially
             pointCloudParticles.SetParticles(particles, particles.Length);
 
+            //calculate the sensor offset in pixel
+            sensorOffsetinPixelX = sensorOffsetX * ratioPX / ratioMM;
+            sensorOffsetinPixelY = sensorOffsetY * ratioPX / ratioMM;
+
             //needed area
-            neededArea.GetComponent<RectTransform>().localPosition = new Vector2(sensorOffsetX, sensorOffsetY);
-            neededArea.GetComponent<RectTransform>().sizeDelta = new Vector2(neededAreaWidth, neededAreaHeight);
+            //neededArea.GetComponent<RectTransform>().localPosition = new Vector2(sensorOffsetinPixelX, sensorOffsetinPixelY);
+            //neededArea.GetComponent<RectTransform>().sizeDelta = new Vector2(neededAreaWidth, neededAreaHeight);
 
             //reading xml n assigning to the trigger area
             XDocument allXMLData = XDocument.Load(xmlPath);
@@ -136,7 +147,6 @@ namespace Assets.SerialPortUtility.Scripts
                 string[] center = allXMLData.Element("settings").Element("videoContainer" + m).Element("center").Value.Trim().Split(',');
                 string width = allXMLData.Element("settings").Element("videoContainer" + m).Element("width").Value.Trim();
                 string height = allXMLData.Element("settings").Element("videoContainer" + m).Element("height").Value.Trim();
-                //string videoIndex = 
                 triggerAreas[m].GetComponent<RectTransform>().localPosition = new Vector3((myCanvasWidth / 2 - (float.Parse(center[0]) + float.Parse(width) / 2)) * (-1),
                                                                                           (myCanvasHeight / 2 - (float.Parse(center[1]) + float.Parse(height) / 2)),
                                                                                           0);
@@ -156,6 +166,7 @@ namespace Assets.SerialPortUtility.Scripts
                 IsInsideArea_last[i] = false;
             }
 
+         
 
         }
 
@@ -442,8 +453,8 @@ namespace Assets.SerialPortUtility.Scripts
                     float angle_in_rand = angle * Mathf.Deg2Rad;
 
                     pos = new Vector2(distance * Mathf.Sin(angle_in_rand), distance * Mathf.Cos(angle_in_rand));
-                    pos.x *= -1f * zoomTimes;
-                    pos.y *= -1f * zoomTimes;
+                    pos.x *= -1f * ratioPX / ratioMM * zoomTimes;
+                    pos.y *= -1f * ratioPX / ratioMM * zoomTimes;
 
                     int xCount = Mathf.RoundToInt(pos.x / 3);
                     int yCount = Mathf.RoundToInt(pos.y / 3);               
@@ -451,16 +462,17 @@ namespace Assets.SerialPortUtility.Scripts
                     Vector2 snapped_pos = new Vector2((float)xCount, (float)yCount);
                    
                     if (pos.x != 0 && pos.y != 0 
-                        && pos.x < neededAreaWidth * 0.5f + neededAreaOffsetX && pos.x > neededAreaWidth * -0.5f + neededAreaOffsetX
-                        && pos.y > neededAreaHeight * -0.5f + neededAreaOffsetY && pos.y < neededAreaHeight * 0.5f + neededAreaOffsetY)
+                        //&& pos.x < neededAreaWidth * 0.5f + neededAreaOffsetX && pos.x > neededAreaWidth * -0.5f + neededAreaOffsetX
+                        //&& pos.y > neededAreaHeight * -0.5f + neededAreaOffsetY && pos.y < neededAreaHeight * 0.5f + neededAreaOffsetY
+                        )
                     {
                         xCount = xCount + canvasGridX / 2;
                         yCount = yCount + canvasGridY / 2;
                         int pid = xCount + canvasGridX * yCount;
                         if (!ids.Contains(pid))
                         {
-                            pos.x += sensorOffsetX;
-                            pos.y += sensorOffsetY;
+                            pos.x += sensorOffsetinPixelX;
+                            pos.y += sensorOffsetinPixelY;
                             ids_positions.Add(new Vector2(pos.x, pos.y));
                             ids.Add(pid);
                         }
@@ -495,8 +507,8 @@ namespace Assets.SerialPortUtility.Scripts
         public void UpdateParticlesAndAreas()
         {
             //update needed area
-            neededArea.GetComponent<RectTransform>().localPosition = new Vector2(neededAreaOffsetX + sensorOffsetX, neededAreaOffsetY + sensorOffsetY);
-            neededArea.GetComponent<RectTransform>().sizeDelta = new Vector2(neededAreaWidth, neededAreaHeight);
+            //neededArea.GetComponent<RectTransform>().localPosition = new Vector2(neededAreaOffsetX + sensorOffsetX, neededAreaOffsetY + sensorOffsetY);
+            //neededArea.GetComponent<RectTransform>().sizeDelta = new Vector2(neededAreaWidth, neededAreaHeight);
 
             //print(ids.Count + "  " + ids_positions.Count);
             for (int id = 0; id < ids.Count; id++)
@@ -525,7 +537,7 @@ namespace Assets.SerialPortUtility.Scripts
             int centerid = canvasGridX / 2 + canvasGridY / 2 * canvasGridX;
             particles[centerid].startColor = Color.red;
             particles[centerid].startSize = 15;
-            particles[centerid].position = new Vector2(sensorOffsetX, sensorOffsetY);
+            particles[centerid].position = new Vector2(sensorOffsetinPixelX, sensorOffsetinPixelY);
             pointCloudParticles.SetParticles(particles, particles.Length);
 
 
